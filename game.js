@@ -12,46 +12,21 @@
     "🚗","✈️","🚀","🛸","⛵","🚲","🏎️","🚁","🛶","🚂",
   ];
 
-  const MAPS = {
-    animals: {
-      name: "Animals",
-      cols: 4,
-      rows: 3,
-      emojis: ["🐶","🐱","🦊","🐻","🐼","🐸","🐵","🦁","🐯","🐨","🐰","🐮","🐷","🐔"],
-    },
-    food: {
-      name: "Food",
-      cols: 6,
-      rows: 3,
-      emojis: ["🍎","🍌","🍇","🍓","🍒","🍉","🍑","🥝","🥑","🌽","🥕","🍍","🥭","🥥","🥦","🍆"],
-    },
-    faces: {
-      name: "Faces",
-      cols: 6,
-      rows: 4,
-      emojis: ["😀","😂","😍","😎","🤩","🥳","😇","🤯","🤠","🤖","👻","👽","💀","😺","🙀","😈","🤡","🥶"],
-    },
-    nature: {
-      name: "Nature",
-      cols: 6,
-      rows: 5,
-      emojis: ["🌸","🌻","🌼","🌹","🌷","🌲","🌴","🌵","🍀","🍁","🍂","🌊","🔥","❄️","⭐","🌈","☀️","🌙","⚡","🌍","🍃","🌿"],
-    },
-    travel: {
-      name: "Travel",
-      cols: 8,
-      rows: 6,
-      emojis: ["🚗","🚕","🚙","🚌","🚎","🏎️","🚓","🚑","🚒","🚐","🛻","🚚","🚛","🚜","🛵","🏍️","🚲","🛴","✈️","🛩️","🚀","🛸","🚁","⛵","🛶","🚤","🛥️","🚢","🚂","🚆","🚇","🚊"],
-    },
-  };
-  const MAP_ORDER = ["animals", "food", "faces", "nature", "travel"];
-
   const DIFFICULTIES = {
-    easy:       { name: "Easy",      cols: 4, rows: 3 },
-    medium:     { name: "Medium",    cols: 4, rows: 4 },
-    hard:       { name: "Hard",      cols: 6, rows: 4 },
-    "very-hard":{ name: "Very Hard", cols: 6, rows: 6 },
-    extreme:    { name: "Extreme",   cols: 8, rows: 6 },
+    classic: {
+      easy:       { name: "Easy",      cols: 4, rows: 3 },
+      medium:     { name: "Medium",    cols: 4, rows: 4 },
+      hard:       { name: "Hard",      cols: 6, rows: 4 },
+      "very-hard":{ name: "Very Hard", cols: 6, rows: 6 },
+      extreme:    { name: "Extreme",   cols: 8, rows: 6 },
+    },
+    triples: {
+      easy:       { name: "Easy",      cols: 4, rows: 3 },
+      medium:     { name: "Medium",    cols: 6, rows: 3 },
+      hard:       { name: "Hard",      cols: 6, rows: 4 },
+      "very-hard":{ name: "Very Hard", cols: 6, rows: 6 },
+      extreme:    { name: "Extreme",   cols: 8, rows: 6 },
+    },
   };
   const DIFFICULTY_ORDER = ["easy", "medium", "hard", "very-hard", "extreme"];
 
@@ -110,7 +85,7 @@
     screen: "start",          // "start" | "game" | "win"
     mode: "classic",          // "classic" | "triples"
     classicPick: "easy",
-    triplesPick: "animals",
+    triplesPick: "easy",
   };
 
   const game = {
@@ -140,7 +115,7 @@
       el(
         "p",
         { class: "subtitle" },
-        "Flip cards to find matches. Pick a board size, or switch to Triples to hunt three-of-a-kind on themed maps.",
+        "Flip cards to find matches. Pick a difficulty, or switch to Triples to hunt three-of-a-kind.",
       ),
     );
 
@@ -167,79 +142,43 @@
     root.append(tabs);
 
     const options = el("div", { class: "options" });
-
-    if (ui.mode === "classic") {
-      options.append(el("h2", {}, "Difficulty"));
-      const grid = el("div", { class: "option-grid" });
-      for (const key of DIFFICULTY_ORDER) {
-        const d = DIFFICULTIES[key];
-        const cards = d.cols * d.rows;
-        const best = bests[bestKey("classic", key)];
-        const card = el(
-          "button",
-          {
-            type: "button",
-            class:
-              "option-card" + (ui.classicPick === key ? " selected" : ""),
-          },
-          el("span", { class: "option-name" }, d.name),
-          el(
-            "span",
-            { class: "option-meta" },
-            `${d.cols}×${d.rows} · ${cards / 2} pairs`,
-          ),
-          best
-            ? el(
-                "span",
-                { class: "option-best" },
-                `Best: ${formatTime(best.timeMs)} · ${best.moves} moves`,
-              )
-            : null,
-        );
-        card.addEventListener("click", () => {
-          ui.classicPick = key;
-          render();
-        });
-        grid.append(card);
-      }
-      options.append(grid);
-    } else {
-      options.append(el("h2", {}, "Map"));
-      const grid = el("div", { class: "option-grid" });
-      for (const key of MAP_ORDER) {
-        const m = MAPS[key];
-        const cards = m.cols * m.rows;
-        const triples = cards / 3;
-        const best = bests[bestKey("triples", key)];
-        const card = el(
-          "button",
-          {
-            type: "button",
-            class:
-              "option-card" + (ui.triplesPick === key ? " selected" : ""),
-          },
-          el("span", { class: "option-name" }, m.name),
-          el(
-            "span",
-            { class: "option-meta" },
-            `${m.cols}×${m.rows} · ${triples} triples`,
-          ),
-          best
-            ? el(
-                "span",
-                { class: "option-best" },
-                `Best: ${formatTime(best.timeMs)} · ${best.moves} moves`,
-              )
-            : null,
-        );
-        card.addEventListener("click", () => {
-          ui.triplesPick = key;
-          render();
-        });
-        grid.append(card);
-      }
-      options.append(grid);
+    options.append(el("h2", {}, "Difficulty"));
+    const grid = el("div", { class: "option-grid" });
+    const matchSize = ui.mode === "classic" ? 2 : 3;
+    const groupLabel = ui.mode === "classic" ? "pairs" : "triples";
+    const currentPick = ui.mode === "classic" ? ui.classicPick : ui.triplesPick;
+    for (const key of DIFFICULTY_ORDER) {
+      const d = DIFFICULTIES[ui.mode][key];
+      const cards = d.cols * d.rows;
+      const best = bests[bestKey(ui.mode, key)];
+      const card = el(
+        "button",
+        {
+          type: "button",
+          class: "option-card" + (currentPick === key ? " selected" : ""),
+        },
+        el("span", { class: "option-name" }, d.name),
+        el(
+          "span",
+          { class: "option-meta" },
+          `${d.cols}×${d.rows} · ${cards / matchSize} ${groupLabel}`,
+        ),
+        best
+          ? el(
+              "span",
+              { class: "option-best" },
+              `Best: ${formatTime(best.timeMs)} · ${best.moves} moves`,
+            )
+          : null,
+      );
+      card.addEventListener("click", () => {
+        if (ui.mode === "classic") ui.classicPick = key;
+        else ui.triplesPick = key;
+        render();
+      });
+      grid.append(card);
     }
+    options.append(grid);
 
     const actions = el("div", { class: "start-actions" });
     const startBtn = el("button", { type: "button", class: "primary" }, "Start game");
@@ -355,10 +294,7 @@
   function renderWin() {
     const root = el("section", { class: "win" });
     root.append(el("h1", {}, "🎉 You did it"));
-    const pickName =
-      game.mode === "classic"
-        ? DIFFICULTIES[game.pick].name
-        : MAPS[game.pick].name;
+    const pickName = DIFFICULTIES[game.mode][game.pick].name;
     root.append(
       el(
         "p",
@@ -408,23 +344,12 @@
 
     const mode = ui.mode;
     const pick = mode === "classic" ? ui.classicPick : ui.triplesPick;
-
-    let cols, rows, emojis, matchSize;
-    if (mode === "classic") {
-      const d = DIFFICULTIES[pick];
-      cols = d.cols;
-      rows = d.rows;
-      matchSize = 2;
-      const pairs = (cols * rows) / 2;
-      emojis = shuffle(CLASSIC_EMOJIS).slice(0, pairs);
-    } else {
-      const m = MAPS[pick];
-      cols = m.cols;
-      rows = m.rows;
-      matchSize = 3;
-      const triples = (cols * rows) / 3;
-      emojis = shuffle(m.emojis).slice(0, triples);
-    }
+    const matchSize = mode === "classic" ? 2 : 3;
+    const d = DIFFICULTIES[mode][pick];
+    const cols = d.cols;
+    const rows = d.rows;
+    const groups = (cols * rows) / matchSize;
+    const emojis = shuffle(CLASSIC_EMOJIS).slice(0, groups);
 
     const cards = [];
     let id = 0;

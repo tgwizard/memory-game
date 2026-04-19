@@ -181,6 +181,20 @@
     options.append(grid);
 
     const actions = el("div", { class: "start-actions" });
+    if (Object.keys(bests).length > 0) {
+      const clearBtn = el(
+        "button",
+        { type: "button", class: "ghost" },
+        "Clear scores",
+      );
+      clearBtn.addEventListener("click", () => {
+        if (confirm("Clear all saved personal bests?")) {
+          localStorage.removeItem(BEST_KEY);
+          render();
+        }
+      });
+      actions.append(clearBtn);
+    }
     const startBtn = el("button", { type: "button", class: "primary" }, "Start game");
     startBtn.addEventListener("click", startGame);
     actions.append(startBtn);

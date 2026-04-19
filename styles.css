@@ -206,6 +206,12 @@ button.ghost {
 .start-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.start-actions > .ghost:first-child {
+  margin-right: auto;
 }
 
 /* Game screen */

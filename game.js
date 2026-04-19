@@ -14,21 +14,33 @@
 
   const DIFFICULTIES = {
     classic: {
-      easy:       { name: "Easy",      cols: 4, rows: 3 },
-      medium:     { name: "Medium",    cols: 4, rows: 4 },
-      hard:       { name: "Hard",      cols: 6, rows: 4 },
-      "very-hard":{ name: "Very Hard", cols: 6, rows: 6 },
-      extreme:    { name: "Extreme",   cols: 8, rows: 6 },
+      easy:       { name: "Easy",      cols: 4,  rows: 3 },
+      medium:     { name: "Medium",    cols: 4,  rows: 4 },
+      hard:       { name: "Hard",      cols: 6,  rows: 4 },
+      "very-hard":{ name: "Very Hard", cols: 6,  rows: 6 },
+      extreme:    { name: "Extreme",   cols: 8,  rows: 6 },
+      insane:     { name: "Insane",    cols: 10, rows: 8 },
+      nightmare:  { name: "Nightmare", cols: 12, rows: 8 },
     },
     triples: {
-      easy:       { name: "Easy",      cols: 4, rows: 3 },
-      medium:     { name: "Medium",    cols: 6, rows: 3 },
-      hard:       { name: "Hard",      cols: 6, rows: 4 },
-      "very-hard":{ name: "Very Hard", cols: 6, rows: 6 },
-      extreme:    { name: "Extreme",   cols: 8, rows: 6 },
+      easy:       { name: "Easy",      cols: 4,  rows: 3 },
+      medium:     { name: "Medium",    cols: 6,  rows: 3 },
+      hard:       { name: "Hard",      cols: 6,  rows: 4 },
+      "very-hard":{ name: "Very Hard", cols: 6,  rows: 6 },
+      extreme:    { name: "Extreme",   cols: 8,  rows: 6 },
+      insane:     { name: "Insane",    cols: 10, rows: 6 },
+      nightmare:  { name: "Nightmare", cols: 12, rows: 8 },
     },
   };
-  const DIFFICULTY_ORDER = ["easy", "medium", "hard", "very-hard", "extreme"];
+  const DIFFICULTY_ORDER = [
+    "easy",
+    "medium",
+    "hard",
+    "very-hard",
+    "extreme",
+    "insane",
+    "nightmare",
+  ];
 
   const BEST_KEY = "memory-game:best";
 
@@ -246,8 +258,8 @@
     root.append(hud);
 
     const board = el("div", { class: "board", id: "board" });
-    board.style.gridTemplateColumns = `repeat(${game.cols}, minmax(0, 1fr))`;
-    board.style.maxWidth = `min(100%, ${game.cols * 120}px)`;
+    board.style.setProperty("--cols", String(game.cols));
+    board.style.setProperty("--rows", String(game.rows));
     for (const card of game.cards) {
       board.append(renderCard(card));
     }

@@ -262,10 +262,29 @@ button.ghost {
 }
 
 .board {
-  width: 100%;
+  --cols: 4;
+  --rows: 3;
+  --gap: 10px;
   display: grid;
-  gap: 10px;
+  gap: var(--gap);
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  width: min(
+    100%,
+    calc(var(--cols) * 120px),
+    calc((100dvh - 160px) * var(--cols) / var(--rows))
+  );
+  aspect-ratio: var(--cols) / var(--rows);
   margin: auto 0;
+}
+
+@media (max-width: 520px) {
+  .board {
+    --gap: 6px;
+    width: min(
+      100%,
+      calc((100dvh - 120px) * var(--cols) / var(--rows))
+    );
+  }
 }
 
 .card {
@@ -399,7 +418,4 @@ button.ghost {
     padding: 14px;
   }
 
-  .board {
-    gap: 6px;
-  }
 }
